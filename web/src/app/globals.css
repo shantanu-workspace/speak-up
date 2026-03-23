@@ -16,19 +16,19 @@
   --danger: #ef4444;
 }
 
-* {
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-body {
-  font-family: var(--font-sans);
-  background: var(--bg);
-  color: var(--ink);
+html, body {
+  background-color: #fafaf8 !important;
+  font-family: 'DM Sans', sans-serif !important;
+  color: #1a1a1a;
   -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3 {
-  font-family: var(--font-serif);
+  font-family: 'DM Serif Display', serif;
 }
