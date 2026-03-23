@@ -1,10 +1,31 @@
 import { UserButton } from "@clerk/nextjs";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export default async function DashboardPage() {
   const { userId } = await auth();
-  if (!userId) redirect("/sign-in");
+  if (!userId) {
+    const signInUrl = process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL;
+    redirect(signInUrl || "/sign-in");
+  }
+
+  const user = await currentUser();
+  if (user) {
+    const supabase = createAdminClient();
+    const email = user.emailAddresses[0]?.emailAddress ?? "";
+    const fullName = `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim();
+
+    await supabase.from("users").upsert(
+      {
+        clerk_id: userId,
+        email,
+        full_name: fullName,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "clerk_id" }
+    );
+  }
 
   return (
     <main className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100">

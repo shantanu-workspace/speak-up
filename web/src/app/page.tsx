@@ -5,8 +5,10 @@ export default async function Home() {
   const { userId } = await auth();
   
   if (userId) {
-    redirect("/dashboard");
+    const dashboardUrl = process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL;
+    redirect(dashboardUrl || "/dashboard");
   } else {
-    redirect("/sign-in");
+    const signInUrl = process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL;
+    redirect(signInUrl || "/sign-in");
   }
 }
